@@ -51,7 +51,7 @@ class SettingsPage(QWidget):
         self.electricidad_costo.setDecimals(6)
         self.electricidad_costo.setSingleStep(0.00001)
         self.electricidad_costo.setValue(self.config.get("electricidad_costo", 0.000153))
-        costos_form.addRow("Costo electricidad por kWh:", self.electricidad_costo)
+        costos_form.addRow("Costo electricidad por Watt:", self.electricidad_costo)
 
         layout.addWidget(costos_group)
 

@@ -41,6 +41,49 @@ QPushButton#small {
     padding: 8px 16px;
 }
 
+QPushButton#action {
+    font-size: 14px;
+    padding: 8px 14px;
+    min-width: 60px;
+}
+
+QPushButton#action:hover {
+    background-color: #1a4a8a;
+}
+
+QPushButton#action-del {
+    font-size: 14px;
+    padding: 8px 14px;
+    min-width: 60px;
+    background-color: #8b0000;
+}
+
+QPushButton#action-del:hover {
+    background-color: #a00000;
+}
+
+QPushButton#action-toggle-on {
+    font-size: 14px;
+    padding: 8px 14px;
+    min-width: 60px;
+    background-color: #006400;
+}
+
+QPushButton#action-toggle-on:hover {
+    background-color: #008000;
+}
+
+QPushButton#action-toggle-off {
+    font-size: 14px;
+    padding: 8px 14px;
+    min-width: 60px;
+    background-color: #8b0000;
+}
+
+QPushButton#action-toggle-off:hover {
+    background-color: #a00000;
+}
+
 QPushButton:hover {
     background-color: #1a4a8a;
 }

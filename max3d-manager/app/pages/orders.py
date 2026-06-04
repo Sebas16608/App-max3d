@@ -318,7 +318,7 @@ class OrderDialog(QDialog):
             costo_hora_modelado=self.config.get("modelado_costo_hora", 25),
             costo_pintura=costo_pint,
             potencia_w=self.config.get("electricidad_potencia", 300),
-            costo_kwh=self.config.get("electricidad_costo", 0.000153),
+            costo_por_watt=self.config.get("electricidad_costo", 0.000153),
             costo_desgaste_hora=self.config.get("desgaste_costo_hora", 0.75),
             trabajo_porcentaje=self.config.get("trabajo_porcentaje", 20),
             redondeo=self.config.get("redondeo", 5),
@@ -515,19 +515,19 @@ class OrdersPage(QWidget):
 
             btn_widget = QWidget()
             btn_layout = QHBoxLayout(btn_widget)
-            btn_layout.setContentsMargins(4, 2, 4, 2)
+            btn_layout.setContentsMargins(4, 4, 4, 4)
+            btn_layout.setSpacing(6)
 
             btn_edit = QPushButton("Editar")
-            btn_edit.setObjectName("small")
-            btn_edit.setFixedHeight(30)
-            btn_edit.clicked.connect(lambda checked, pid=ped["id"]: self.edit_pedido(pid))
+            btn_edit.setObjectName("action")
+            btn_edit.setFixedHeight(32)
+            btn_edit.clicked.connect(lambda ch, pid=ped["id"]: self.edit_pedido(pid))
             btn_layout.addWidget(btn_edit)
 
             btn_del = QPushButton("Borrar")
-            btn_del.setObjectName("small")
-            btn_del.setFixedHeight(30)
-            btn_del.setStyleSheet("background-color: #8b0000; font-size: 14px; padding: 4px 10px;")
-            btn_del.clicked.connect(lambda checked, pid=ped["id"]: self.delete_pedido(pid))
+            btn_del.setObjectName("action-del")
+            btn_del.setFixedHeight(32)
+            btn_del.clicked.connect(lambda ch, pid=ped["id"]: self.delete_pedido(pid))
             btn_layout.addWidget(btn_del)
 
             self.table.setCellWidget(i, 9, btn_widget)

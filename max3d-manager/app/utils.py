@@ -6,9 +6,8 @@ def calcular_costo_material(peso, precio_por_gramo):
     return peso * precio_por_gramo if precio_por_gramo else 0
 
 
-def calcular_costo_luz(horas, potencia_w, costo_kwh):
-    kwh = (potencia_w * horas) / 1000
-    return kwh * costo_kwh
+def calcular_costo_luz(horas, potencia_w, costo_por_watt):
+    return potencia_w * horas * costo_por_watt
 
 
 def calcular_costo_desgaste(horas, costo_hora):
@@ -41,13 +40,13 @@ def calcular_totales_pedido(
     costo_hora_modelado,
     costo_pintura=0,
     potencia_w=300,
-    costo_kwh=0.000153,
+    costo_por_watt=0.000153,
     costo_desgaste_hora=0.75,
     trabajo_porcentaje=20,
     redondeo=5
 ):
     material = calcular_costo_material(peso, precio_por_gramo)
-    luz = calcular_costo_luz(horas_impresion, potencia_w, costo_kwh)
+    luz = calcular_costo_luz(horas_impresion, potencia_w, costo_por_watt)
     desgaste = calcular_costo_desgaste(horas_impresion, costo_desgaste_hora)
     modelado = calcular_costo_modelado(horas_modelado, costo_hora_modelado)
     costo_total = material + luz + desgaste + costo_pintura + modelado

@@ -210,26 +210,26 @@ class CatalogPage(QWidget):
 
             btn_widget = QWidget()
             btn_layout = QHBoxLayout(btn_widget)
-            btn_layout.setContentsMargins(4, 2, 4, 2)
+            btn_layout.setContentsMargins(4, 4, 4, 4)
+            btn_layout.setSpacing(6)
 
             btn_edit = QPushButton("Editar")
-            btn_edit.setObjectName("small")
-            btn_edit.setFixedHeight(30)
-            btn_edit.clicked.connect(lambda checked, pid=p["id"]: self.edit_producto(pid))
+            btn_edit.setObjectName("action")
+            btn_edit.setFixedHeight(32)
+            btn_edit.clicked.connect(lambda ch, pid=p["id"]: self.edit_producto(pid))
             btn_layout.addWidget(btn_edit)
 
-            btn_toggle = QPushButton("Desactivar" if p["activo"] else "Activar")
-            btn_toggle.setObjectName("small")
-            btn_toggle.setFixedHeight(30)
-            btn_toggle.setStyleSheet(f"background-color: {'#8b0000' if p['activo'] else '#006400'}; font-size: 14px; padding: 4px 10px;")
-            btn_toggle.clicked.connect(lambda checked, pid=p["id"], a=p["activo"]: self.toggle_producto(pid, a))
+            activo = p["activo"]
+            btn_toggle = QPushButton("Desactivar" if activo else "Activar")
+            btn_toggle.setObjectName("action-toggle-on" if activo else "action-toggle-off")
+            btn_toggle.setFixedHeight(32)
+            btn_toggle.clicked.connect(lambda ch, pid=p["id"]: self.toggle_producto(pid))
             btn_layout.addWidget(btn_toggle)
 
             btn_del = QPushButton("Borrar")
-            btn_del.setObjectName("small")
-            btn_del.setFixedHeight(30)
-            btn_del.setStyleSheet("background-color: #8b0000; font-size: 14px; padding: 4px 10px;")
-            btn_del.clicked.connect(lambda checked, pid=p["id"]: self.delete_producto(pid))
+            btn_del.setObjectName("action-del")
+            btn_del.setFixedHeight(32)
+            btn_del.clicked.connect(lambda ch, pid=p["id"]: self.delete_producto(pid))
             btn_layout.addWidget(btn_del)
 
             self.table.setCellWidget(i, 8, btn_widget)
@@ -248,9 +248,11 @@ class CatalogPage(QWidget):
             if dialog.exec():
                 self.refresh()
 
-    def toggle_producto(self, pid, activo):
-        self.db.update("productos", {"activo": 0 if activo else 1}, "id=?", [pid])
-        self.refresh()
+    def toggle_producto(self, pid):
+        prod = self.db.fetch_one("SELECT activo FROM productos WHERE id=?", [pid])
+        if prod:
+            self.db.update("productos", {"activo": 0 if prod["activo"] else 1}, "id=?", [pid])
+            self.refresh()
 
     def delete_producto(self, pid):
         reply = QMessageBox.question(self, "Confirmar", "¿Eliminar este producto?", QMessageBox.Yes | QMessageBox.No)
