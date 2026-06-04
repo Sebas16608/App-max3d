@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
     QHeaderView, QTabWidget, QTextEdit
 )
 from PySide6.QtCore import Qt
-from app.utils import formatear_moneda
+from datetime import date
 
 
 class FilamentoDialog(QDialog):
@@ -14,7 +14,7 @@ class FilamentoDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Filamento" if not item else "Editar Filamento")
-        self.setMinimumSize(400, 350)
+        self.setMinimumSize(500, 450)
         self.setup_ui()
         if item:
             self.load_data()
@@ -22,7 +22,13 @@ class FilamentoDialog(QDialog):
     def setup_ui(self):
         layout = QVBoxLayout(self)
         form = QFormLayout()
-        form.setSpacing(10)
+        form.setSpacing(12)
+
+        self.categoria = QComboBox()
+        self.categoria.setEditable(True)
+        self.categoria.addItems(["PLA", "PETG", "TPU", "ABS", "Resina", "Flexible", "Madera", "Metal", "Otros"])
+        self.categoria.setCurrentText("")
+        form.addRow("Categoría:", self.categoria)
 
         self.nombre = QLineEdit()
         self.nombre.setPlaceholderText("Ej: PLA Negro")
@@ -72,6 +78,12 @@ class FilamentoDialog(QDialog):
         layout.addLayout(btn_layout)
 
     def load_data(self):
+        cat = self.item["categoria"] if "categoria" in self.item.keys() else ""
+        idx = self.categoria.findText(cat)
+        if idx >= 0:
+            self.categoria.setCurrentIndex(idx)
+        else:
+            self.categoria.setCurrentText(cat)
         self.nombre.setText(self.item["nombre"])
         self.marca.setText(self.item["marca"] or "")
         self.tipo.setText(self.item["tipo"] or "")
@@ -85,6 +97,7 @@ class FilamentoDialog(QDialog):
             QMessageBox.warning(self, "Error", "El nombre es obligatorio")
             return
         data = {
+            "categoria": self.categoria.currentText().strip(),
             "nombre": self.nombre.text().strip(),
             "marca": self.marca.text().strip(),
             "tipo": self.tipo.text().strip(),
@@ -96,7 +109,14 @@ class FilamentoDialog(QDialog):
         if self.item:
             self.db.update("filamentos", data, "id=?", [self.item["id"]])
         else:
-            self.db.insert("filamentos", data)
+            new_id = self.db.insert("filamentos", data)
+            if self.precio.value() > 0:
+                self.db.insert("inversiones", {
+                    "fecha": date.today().isoformat(),
+                    "categoria": "Filamento",
+                    "descripcion": f"Compra de {self.nombre.text().strip()}",
+                    "monto": self.precio.value(),
+                })
         self.accept()
 
 
@@ -106,7 +126,7 @@ class PinturaDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Pintura" if not item else "Editar Pintura")
-        self.setMinimumSize(400, 300)
+        self.setMinimumSize(500, 400)
         self.setup_ui()
         if item:
             self.load_data()
@@ -114,7 +134,13 @@ class PinturaDialog(QDialog):
     def setup_ui(self):
         layout = QVBoxLayout(self)
         form = QFormLayout()
-        form.setSpacing(10)
+        form.setSpacing(12)
+
+        self.categoria = QComboBox()
+        self.categoria.setEditable(True)
+        self.categoria.addItems(["Acrílica", "Spray", "Esmalte", "Látex", "Óleo", "Temple", "Otros"])
+        self.categoria.setCurrentText("")
+        form.addRow("Categoría:", self.categoria)
 
         self.marca = QLineEdit()
         self.marca.setPlaceholderText("Marca")
@@ -152,6 +178,12 @@ class PinturaDialog(QDialog):
         layout.addLayout(btn_layout)
 
     def load_data(self):
+        cat = self.item["categoria"] if "categoria" in self.item.keys() else ""
+        idx = self.categoria.findText(cat)
+        if idx >= 0:
+            self.categoria.setCurrentIndex(idx)
+        else:
+            self.categoria.setCurrentText(cat)
         self.marca.setText(self.item["marca"] or "")
         self.tipo.setText(self.item["tipo"] or "")
         self.color.setText(self.item["color"] or "")
@@ -160,6 +192,7 @@ class PinturaDialog(QDialog):
 
     def guardar(self):
         data = {
+            "categoria": self.categoria.currentText().strip(),
             "marca": self.marca.text().strip(),
             "tipo": self.tipo.text().strip(),
             "color": self.color.text().strip(),
@@ -169,7 +202,14 @@ class PinturaDialog(QDialog):
         if self.item:
             self.db.update("pinturas", data, "id=?", [self.item["id"]])
         else:
-            self.db.insert("pinturas", data)
+            new_id = self.db.insert("pinturas", data)
+            if self.precio.value() > 0:
+                self.db.insert("inversiones", {
+                    "fecha": date.today().isoformat(),
+                    "categoria": "Pintura",
+                    "descripcion": f"Compra de pintura {self.color.text().strip() or self.marca.text().strip()}",
+                    "monto": self.precio.value(),
+                })
         self.accept()
 
 
@@ -179,7 +219,7 @@ class OtroMaterialDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Otro Material" if not item else "Editar Material")
-        self.setMinimumSize(400, 250)
+        self.setMinimumSize(500, 320)
         self.setup_ui()
         if item:
             self.load_data()
@@ -187,7 +227,7 @@ class OtroMaterialDialog(QDialog):
     def setup_ui(self):
         layout = QVBoxLayout(self)
         form = QFormLayout()
-        form.setSpacing(10)
+        form.setSpacing(12)
 
         self.nombre = QLineEdit()
         self.nombre.setPlaceholderText("Nombre del material")
@@ -233,7 +273,14 @@ class OtroMaterialDialog(QDialog):
         if self.item:
             self.db.update("otros_materiales", data, "id=?", [self.item["id"]])
         else:
-            self.db.insert("otros_materiales", data)
+            new_id = self.db.insert("otros_materiales", data)
+            if self.costo.value() > 0:
+                self.db.insert("inversiones", {
+                    "fecha": date.today().isoformat(),
+                    "categoria": "Material",
+                    "descripcion": f"Compra de {self.nombre.text().strip()}",
+                    "monto": self.costo.value(),
+                })
         self.accept()
 
 
@@ -264,10 +311,10 @@ class InventoryPage(QWidget):
         fil_layout.addLayout(fil_header)
 
         self.fil_table = QTableWidget()
-        self.fil_table.setColumnCount(7)
-        self.fil_table.setHorizontalHeaderLabels(["ID", "Nombre", "Marca", "Tipo", "Color", "Peso disp.", "Acciones"])
+        self.fil_table.setColumnCount(8)
+        self.fil_table.setHorizontalHeaderLabels(["ID", "Categoría", "Nombre", "Marca", "Tipo", "Color", "Peso disp.", "Acciones"])
         self.fil_table.horizontalHeader().setStretchLastSection(True)
-        self.fil_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.fil_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.fil_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.fil_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.fil_table.verticalHeader().setVisible(False)
@@ -284,9 +331,10 @@ class InventoryPage(QWidget):
         pin_layout.addLayout(pin_header)
 
         self.pin_table = QTableWidget()
-        self.pin_table.setColumnCount(6)
-        self.pin_table.setHorizontalHeaderLabels(["ID", "Marca", "Tipo", "Color", "Cantidad", "Acciones"])
+        self.pin_table.setColumnCount(7)
+        self.pin_table.setHorizontalHeaderLabels(["ID", "Categoría", "Marca", "Tipo", "Color", "Cantidad", "Acciones"])
         self.pin_table.horizontalHeader().setStretchLastSection(True)
+        self.pin_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         self.pin_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.pin_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.pin_table.verticalHeader().setVisible(False)
@@ -316,7 +364,7 @@ class InventoryPage(QWidget):
         mov_tab = QWidget()
         mov_layout = QVBoxLayout(mov_tab)
         mov_title = QLabel("Historial de Movimientos")
-        mov_title.setStyleSheet("font-size: 16px; font-weight: bold; padding: 8px 0;")
+        mov_title.setStyleSheet("font-size: 18px; font-weight: bold; padding: 8px 0;")
         mov_layout.addWidget(mov_title)
         self.mov_table = QTableWidget()
         self.mov_table.setColumnCount(5)
@@ -341,24 +389,18 @@ class InventoryPage(QWidget):
         self.fil_table.setRowCount(len(items))
         for i, item in enumerate(items):
             self.fil_table.setItem(i, 0, QTableWidgetItem(str(item["id"])))
-            self.fil_table.setItem(i, 1, QTableWidgetItem(item["nombre"]))
-            self.fil_table.setItem(i, 2, QTableWidgetItem(item["marca"] or ""))
-            self.fil_table.setItem(i, 3, QTableWidgetItem(item["tipo"] or ""))
-            self.fil_table.setItem(i, 4, QTableWidgetItem(item["color"] or ""))
-            self.fil_table.setItem(i, 5, QTableWidgetItem(f"{item['peso_disponible']:.0f}g"))
+            cat = item["categoria"] if "categoria" in item.keys() else ""
+            self.fil_table.setItem(i, 1, QTableWidgetItem(cat or ""))
+            self.fil_table.setItem(i, 2, QTableWidgetItem(item["nombre"]))
+            self.fil_table.setItem(i, 3, QTableWidgetItem(item["marca"] or ""))
+            self.fil_table.setItem(i, 4, QTableWidgetItem(item["tipo"] or ""))
+            self.fil_table.setItem(i, 5, QTableWidgetItem(item["color"] or ""))
+            self.fil_table.setItem(i, 6, QTableWidgetItem(f"{item['peso_disponible']:.0f}g"))
 
-            btn_widget = QWidget()
-            btn_layout = QHBoxLayout(btn_widget)
-            btn_layout.setContentsMargins(4, 2, 4, 2)
-            btn_edit = QPushButton("✏️")
-            btn_edit.setFixedSize(32, 28)
-            btn_edit.clicked.connect(lambda checked, fid=item["id"]: self.edit_filamento(fid))
-            btn_layout.addWidget(btn_edit)
-            btn_del = QPushButton("🗑️")
-            btn_del.setFixedSize(32, 28)
-            btn_del.clicked.connect(lambda checked, fid=item["id"]: self.delete_filamento(fid))
-            btn_layout.addWidget(btn_del)
-            self.fil_table.setCellWidget(i, 6, btn_widget)
+            self.fil_table.setCellWidget(i, 7, self._acciones_widget(
+                lambda fid=item["id"]: self.edit_filamento(fid),
+                lambda fid=item["id"]: self.delete_filamento(fid)
+            ))
 
         self.fil_table.setColumnHidden(0, True)
 
@@ -367,23 +409,17 @@ class InventoryPage(QWidget):
         self.pin_table.setRowCount(len(items))
         for i, item in enumerate(items):
             self.pin_table.setItem(i, 0, QTableWidgetItem(str(item["id"])))
-            self.pin_table.setItem(i, 1, QTableWidgetItem(item["marca"] or ""))
-            self.pin_table.setItem(i, 2, QTableWidgetItem(item["tipo"] or ""))
-            self.pin_table.setItem(i, 3, QTableWidgetItem(item["color"] or ""))
-            self.pin_table.setItem(i, 4, QTableWidgetItem(str(item["cantidad_disponible"])))
+            cat = item["categoria"] if "categoria" in item.keys() else ""
+            self.pin_table.setItem(i, 1, QTableWidgetItem(cat or ""))
+            self.pin_table.setItem(i, 2, QTableWidgetItem(item["marca"] or ""))
+            self.pin_table.setItem(i, 3, QTableWidgetItem(item["tipo"] or ""))
+            self.pin_table.setItem(i, 4, QTableWidgetItem(item["color"] or ""))
+            self.pin_table.setItem(i, 5, QTableWidgetItem(str(item["cantidad_disponible"])))
 
-            btn_widget = QWidget()
-            btn_layout = QHBoxLayout(btn_widget)
-            btn_layout.setContentsMargins(4, 2, 4, 2)
-            btn_edit = QPushButton("✏️")
-            btn_edit.setFixedSize(32, 28)
-            btn_edit.clicked.connect(lambda checked, pid=item["id"]: self.edit_pintura(pid))
-            btn_layout.addWidget(btn_edit)
-            btn_del = QPushButton("🗑️")
-            btn_del.setFixedSize(32, 28)
-            btn_del.clicked.connect(lambda checked, pid=item["id"]: self.delete_pintura(pid))
-            btn_layout.addWidget(btn_del)
-            self.pin_table.setCellWidget(i, 5, btn_widget)
+            self.pin_table.setCellWidget(i, 6, self._acciones_widget(
+                lambda pid=item["id"]: self.edit_pintura(pid),
+                lambda pid=item["id"]: self.delete_pintura(pid)
+            ))
 
         self.pin_table.setColumnHidden(0, True)
 
@@ -395,20 +431,29 @@ class InventoryPage(QWidget):
             self.otro_table.setItem(i, 1, QTableWidgetItem(item["nombre"]))
             self.otro_table.setItem(i, 2, QTableWidgetItem(str(item["cantidad"])))
 
-            btn_widget = QWidget()
-            btn_layout = QHBoxLayout(btn_widget)
-            btn_layout.setContentsMargins(4, 2, 4, 2)
-            btn_edit = QPushButton("✏️")
-            btn_edit.setFixedSize(32, 28)
-            btn_edit.clicked.connect(lambda checked, oid=item["id"]: self.edit_otro(oid))
-            btn_layout.addWidget(btn_edit)
-            btn_del = QPushButton("🗑️")
-            btn_del.setFixedSize(32, 28)
-            btn_del.clicked.connect(lambda checked, oid=item["id"]: self.delete_otro(oid))
-            btn_layout.addWidget(btn_del)
-            self.otro_table.setCellWidget(i, 3, btn_widget)
+            self.otro_table.setCellWidget(i, 3, self._acciones_widget(
+                lambda oid=item["id"]: self.edit_otro(oid),
+                lambda oid=item["id"]: self.delete_otro(oid)
+            ))
 
         self.otro_table.setColumnHidden(0, True)
+
+    def _acciones_widget(self, edit_fn, delete_fn):
+        widget = QWidget()
+        layout = QHBoxLayout(widget)
+        layout.setContentsMargins(4, 2, 4, 2)
+        btn_edit = QPushButton("Editar")
+        btn_edit.setObjectName("small")
+        btn_edit.setFixedHeight(30)
+        btn_edit.clicked.connect(edit_fn)
+        layout.addWidget(btn_edit)
+        btn_del = QPushButton("Borrar")
+        btn_del.setObjectName("small")
+        btn_del.setStyleSheet("background-color: #8b0000; font-size: 14px; padding: 4px 10px;")
+        btn_del.setFixedHeight(30)
+        btn_del.clicked.connect(delete_fn)
+        layout.addWidget(btn_del)
+        return widget
 
     def refresh_movimientos(self):
         items = self.db.fetch_all("SELECT * FROM inventario_movimientos ORDER BY fecha DESC LIMIT 100")

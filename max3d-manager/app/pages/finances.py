@@ -146,8 +146,8 @@ class FinancesPage(QWidget):
         inv_layout.addLayout(inv_header)
 
         self.inv_table = QTableWidget()
-        self.inv_table.setColumnCount(5)
-        self.inv_table.setHorizontalHeaderLabels(["ID", "Fecha", "Categoría", "Descripción", "Monto"])
+        self.inv_table.setColumnCount(6)
+        self.inv_table.setHorizontalHeaderLabels(["ID", "Fecha", "Categoría", "Descripción", "Monto", "Acciones"])
         self.inv_table.horizontalHeader().setStretchLastSection(True)
         self.inv_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
         self.inv_table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -207,6 +207,22 @@ class FinancesPage(QWidget):
             self.inv_table.setItem(i, 2, QTableWidgetItem(item["categoria"]))
             self.inv_table.setItem(i, 3, QTableWidgetItem(item["descripcion"] or ""))
             self.inv_table.setItem(i, 4, QTableWidgetItem(f"Q{item['monto']:.2f}"))
+
+            btn_widget = QWidget()
+            btn_layout = QHBoxLayout(btn_widget)
+            btn_layout.setContentsMargins(4, 2, 4, 2)
+            btn_edit = QPushButton("Editar")
+            btn_edit.setObjectName("small")
+            btn_edit.setFixedHeight(30)
+            btn_edit.clicked.connect(lambda checked, iid=item["id"]: self.edit_inversion(iid))
+            btn_layout.addWidget(btn_edit)
+            btn_del = QPushButton("Borrar")
+            btn_del.setObjectName("small")
+            btn_del.setFixedHeight(30)
+            btn_del.setStyleSheet("background-color: #8b0000; font-size: 14px; padding: 4px 10px;")
+            btn_del.clicked.connect(lambda checked, iid=item["id"]: self.delete_inversion(iid))
+            btn_layout.addWidget(btn_del)
+            self.inv_table.setCellWidget(i, 5, btn_widget)
 
         self.inv_table.setColumnHidden(0, True)
 

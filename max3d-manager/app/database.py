@@ -151,7 +151,17 @@ class Database:
         """)
         self.conn.commit()
 
+        self._migrate_schema()
         self._seed_default_data()
+
+    def _migrate_schema(self):
+        cursor = self.conn.cursor()
+        for table, col in [("filamentos", "categoria"), ("pinturas", "categoria")]:
+            try:
+                cursor.execute(f"ALTER TABLE {table} ADD COLUMN {col} TEXT DEFAULT ''")
+            except sqlite3.OperationalError:
+                pass
+        self.conn.commit()
 
     def _seed_default_data(self):
         cursor = self.conn.cursor()

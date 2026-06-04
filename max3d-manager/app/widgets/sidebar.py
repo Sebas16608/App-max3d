@@ -7,7 +7,7 @@ class SidebarButton(QPushButton):
     def __init__(self, text, icon_text="", parent=None):
         super().__init__(parent)
         self.setText(f"  {icon_text}  {text}" if icon_text else text)
-        self.setFixedHeight(44)
+        self.setFixedHeight(48)
         self.setCursor(Qt.PointingHandCursor)
         self.setCheckable(True)
         self.setStyleSheet("""
@@ -18,7 +18,7 @@ class SidebarButton(QPushButton):
                 border-radius: 8px;
                 text-align: left;
                 padding-left: 16px;
-                font-size: 14px;
+                font-size: 16px;
             }
             QPushButton:hover {
                 background-color: #0f3460;

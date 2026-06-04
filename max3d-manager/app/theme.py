@@ -31,9 +31,14 @@ QPushButton {
     background-color: #0f3460;
     color: #e0e0e0;
     border: none;
-    padding: 8px 16px;
+    padding: 10px 18px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 16px;
+}
+
+QPushButton#small {
+    font-size: 14px;
+    padding: 6px 12px;
 }
 
 QPushButton:hover {
@@ -65,8 +70,8 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
     color: #e0e0e0;
     border: 1px solid #0f3460;
     border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 8px 12px;
+    font-size: 16px;
 }
 
 QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
@@ -96,17 +101,19 @@ QTableWidget, QTableView {
 }
 
 QTableWidget::item, QTableView::item {
-    padding: 6px;
+    padding: 8px;
+    font-size: 16px;
 }
 
 QHeaderView::section {
     background-color: #0f3460;
     color: #e0e0e0;
-    padding: 8px;
+    padding: 10px;
     border: none;
     border-right: 1px solid #1a1a2e;
     border-bottom: 1px solid #1a1a2e;
     font-weight: bold;
+    font-size: 16px;
 }
 
 QLabel {
@@ -145,10 +152,11 @@ QGroupBox {
     background-color: #16213e;
     border: 1px solid #0f3460;
     border-radius: 8px;
-    margin-top: 16px;
-    padding: 16px;
+    margin-top: 20px;
+    padding: 20px;
     font-weight: bold;
     color: #e0e0e0;
+    font-size: 16px;
 }
 
 QGroupBox::title {
@@ -206,10 +214,11 @@ QTabWidget::pane {
 QTabBar::tab {
     background-color: #1a1a2e;
     color: #a0a0b0;
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
     margin-right: 2px;
     border-radius: 6px 6px 0 0;
+    font-size: 16px;
 }
 
 QTabBar::tab:selected {
@@ -224,6 +233,7 @@ QTabBar::tab:hover {
 QCheckBox, QRadioButton {
     color: #e0e0e0;
     spacing: 8px;
+    font-size: 16px;
 }
 
 QCheckBox::indicator, QRadioButton::indicator {
@@ -245,7 +255,8 @@ QProgressBar {
     border-radius: 6px;
     text-align: center;
     color: #e0e0e0;
-    height: 22px;
+    height: 26px;
+    font-size: 16px;
 }
 
 QProgressBar::chunk {

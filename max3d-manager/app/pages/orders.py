@@ -464,13 +464,16 @@ class OrdersPage(QWidget):
             btn_layout = QHBoxLayout(btn_widget)
             btn_layout.setContentsMargins(4, 2, 4, 2)
 
-            btn_edit = QPushButton("✏️")
-            btn_edit.setFixedSize(32, 28)
+            btn_edit = QPushButton("Editar")
+            btn_edit.setObjectName("small")
+            btn_edit.setFixedHeight(30)
             btn_edit.clicked.connect(lambda checked, pid=ped["id"]: self.edit_pedido(pid))
             btn_layout.addWidget(btn_edit)
 
-            btn_del = QPushButton("🗑️")
-            btn_del.setFixedSize(32, 28)
+            btn_del = QPushButton("Borrar")
+            btn_del.setObjectName("small")
+            btn_del.setFixedHeight(30)
+            btn_del.setStyleSheet("background-color: #8b0000; font-size: 14px; padding: 4px 10px;")
             btn_del.clicked.connect(lambda checked, pid=ped["id"]: self.delete_pedido(pid))
             btn_layout.addWidget(btn_del)
 
