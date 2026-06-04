@@ -31,14 +31,14 @@ QPushButton {
     background-color: #0f3460;
     color: #e0e0e0;
     border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
+    padding: 14px 28px;
+    border-radius: 8px;
     font-size: 16px;
 }
 
 QPushButton#small {
     font-size: 14px;
-    padding: 6px 12px;
+    padding: 8px 16px;
 }
 
 QPushButton:hover {
@@ -69,9 +69,10 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
     background-color: #16213e;
     color: #e0e0e0;
     border: 1px solid #0f3460;
-    border-radius: 6px;
-    padding: 8px 12px;
+    border-radius: 8px;
+    padding: 10px 14px;
     font-size: 16px;
+    min-height: 24px;
 }
 
 QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
@@ -101,14 +102,14 @@ QTableWidget, QTableView {
 }
 
 QTableWidget::item, QTableView::item {
-    padding: 8px;
+    padding: 12px;
     font-size: 16px;
 }
 
 QHeaderView::section {
     background-color: #0f3460;
     color: #e0e0e0;
-    padding: 10px;
+    padding: 14px;
     border: none;
     border-right: 1px solid #1a1a2e;
     border-bottom: 1px solid #1a1a2e;
@@ -150,10 +151,10 @@ QLabel#card-label {
 
 QGroupBox {
     background-color: #16213e;
-    border: 1px solid #0f3460;
-    border-radius: 8px;
-    margin-top: 20px;
-    padding: 20px;
+    border: 2px solid #0f3460;
+    border-radius: 12px;
+    margin-top: 24px;
+    padding: 24px;
     font-weight: bold;
     color: #e0e0e0;
     font-size: 16px;
@@ -161,14 +162,14 @@ QGroupBox {
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
+    left: 16px;
+    padding: 0 10px;
 }
 
 QScrollBar:vertical {
     background-color: #1a1a2e;
-    width: 10px;
-    border-radius: 5px;
+    width: 12px;
+    border-radius: 6px;
 }
 
 QScrollBar::handle:vertical {
@@ -214,10 +215,10 @@ QTabWidget::pane {
 QTabBar::tab {
     background-color: #1a1a2e;
     color: #a0a0b0;
-    padding: 10px 20px;
+    padding: 14px 28px;
     border: none;
     margin-right: 2px;
-    border-radius: 6px 6px 0 0;
+    border-radius: 8px 8px 0 0;
     font-size: 16px;
 }
 
@@ -245,23 +246,24 @@ QDateEdit, QDateTimeEdit {
     background-color: #16213e;
     color: #e0e0e0;
     border: 1px solid #0f3460;
-    border-radius: 6px;
-    padding: 6px 10px;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 16px;
 }
 
 QProgressBar {
     background-color: #16213e;
     border: 1px solid #0f3460;
-    border-radius: 6px;
+    border-radius: 8px;
     text-align: center;
     color: #e0e0e0;
-    height: 26px;
+    height: 32px;
     font-size: 16px;
 }
 
 QProgressBar::chunk {
     background-color: #e94560;
-    border-radius: 5px;
+    border-radius: 7px;
 }
 """
 

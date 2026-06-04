@@ -14,7 +14,7 @@ class ClientDialog(QDialog):
         self.db = db
         self.cliente = cliente
         self.setWindowTitle("Cliente" if not cliente else "Editar Cliente")
-        self.setMinimumSize(450, 400)
+        self.setMinimumSize(550, 450)
         self.setup_ui()
         if cliente:
             self.load_data()

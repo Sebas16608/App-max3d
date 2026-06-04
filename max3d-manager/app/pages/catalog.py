@@ -13,7 +13,7 @@ class ProductDialog(QDialog):
         self.db = db
         self.producto = producto
         self.setWindowTitle("Producto" if not producto else "Editar Producto")
-        self.setMinimumSize(500, 550)
+        self.setMinimumSize(600, 600)
         self.setup_ui()
         if producto:
             self.load_data()

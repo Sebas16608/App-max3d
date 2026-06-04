@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         self.db = db
         self.config = config
         self.setWindowTitle("Max3D Creations Manager")
-        self.setMinimumSize(1200, 750)
+        self.setMinimumSize(1400, 850)
         self.setup_ui()
 
     def setup_ui(self):

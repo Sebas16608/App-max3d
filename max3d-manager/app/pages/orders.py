@@ -16,7 +16,7 @@ class OrderDialog(QDialog):
         self.config = config
         self.pedido = pedido
         self.setWindowTitle("Nuevo Pedido" if not pedido else "Editar Pedido")
-        self.setMinimumSize(650, 600)
+        self.setMinimumSize(750, 700)
         self.setup_ui()
         if pedido:
             self.load_data()

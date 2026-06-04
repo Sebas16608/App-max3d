@@ -14,20 +14,20 @@ class MetricCard(QFrame):
             QFrame {{
                 background-color: #16213e;
                 border: 1px solid #0f3460;
-                border-radius: 10px;
-                padding: 16px;
-                border-left: 4px solid {color};
+                border-radius: 12px;
+                padding: 24px;
+                border-left: 6px solid {color};
             }}
         """)
         layout = QVBoxLayout(self)
-        layout.setSpacing(4)
+        layout.setSpacing(8)
 
         self.title_label = QLabel(title)
-        self.title_label.setStyleSheet("font-size: 13px; color: #a0a0b0; font-weight: normal; border: none;")
+        self.title_label.setStyleSheet("font-size: 15px; color: #a0a0b0; font-weight: normal; border: none;")
         layout.addWidget(self.title_label)
 
         self.value_label = QLabel(str(value))
-        self.value_label.setStyleSheet(f"font-size: 26px; font-weight: bold; color: {color}; border: none;")
+        self.value_label.setStyleSheet(f"font-size: 32px; font-weight: bold; color: {color}; border: none;")
         layout.addWidget(self.value_label)
 
     def set_value(self, value):
@@ -42,17 +42,18 @@ class AlertCard(QFrame):
         self.setStyleSheet(f"""
             QFrame {{
                 background-color: #16213e;
-                border: 1px solid {color};
-                border-radius: 8px;
-                padding: 12px;
+                border: 2px solid {color};
+                border-radius: 10px;
+                padding: 16px;
             }}
         """)
         layout = QHBoxLayout(self)
+        layout.setSpacing(12)
         icon = QLabel("⚠️" if alert_type == "warning" else "ℹ️")
-        icon.setStyleSheet("font-size: 18px; border: none;")
+        icon.setStyleSheet("font-size: 22px; border: none;")
         layout.addWidget(icon)
         self.msg_label = QLabel(message)
-        self.msg_label.setStyleSheet(f"font-size: 13px; color: {color}; border: none;")
+        self.msg_label.setStyleSheet(f"font-size: 15px; color: {color}; border: none;")
         layout.addWidget(self.msg_label, 1)
 
 
@@ -70,8 +71,8 @@ class DashboardPage(QWidget):
 
         content = QWidget()
         main_layout = QVBoxLayout(content)
-        main_layout.setSpacing(20)
-        main_layout.setContentsMargins(24, 24, 24, 24)
+        main_layout.setSpacing(28)
+        main_layout.setContentsMargins(32, 28, 32, 28)
 
         title = QLabel("Dashboard")
         title.setStyleSheet("font-size: 28px; font-weight: bold; color: #e94560;")
@@ -83,7 +84,7 @@ class DashboardPage(QWidget):
 
         pedidos_group = QGroupBox("Estado de Pedidos")
         pedidos_grid = QGridLayout(pedidos_group)
-        pedidos_grid.setSpacing(12)
+        pedidos_grid.setSpacing(16)
 
         estados = [
             ("Pendientes", "Pendiente", "#e94560"),
@@ -104,7 +105,7 @@ class DashboardPage(QWidget):
 
         metricas_group = QGroupBox("Métricas del Mes")
         metricas_grid = QGridLayout(metricas_group)
-        metricas_grid.setSpacing(12)
+        metricas_grid.setSpacing(16)
 
         metricas = [
             ("Ventas del mes", "ventas", "#e94560"),
@@ -126,7 +127,7 @@ class DashboardPage(QWidget):
 
         indicadores_group = QGroupBox("Indicadores")
         indicadores_grid = QGridLayout(indicadores_group)
-        indicadores_grid.setSpacing(12)
+        indicadores_grid.setSpacing(16)
 
         indicadores = [
             ("Producto más vendido", "producto_top"),
@@ -138,13 +139,14 @@ class DashboardPage(QWidget):
         self.indicador_cards = {}
         for i, (label, key) in enumerate(indicadores):
             frame = QFrame()
-            frame.setStyleSheet("background-color: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 12px;")
+            frame.setStyleSheet("background-color: #16213e; border: 1px solid #0f3460; border-radius: 12px; padding: 20px;")
             fl = QVBoxLayout(frame)
+            fl.setSpacing(8)
             lbl = QLabel(label)
-            lbl.setStyleSheet("font-size: 12px; color: #a0a0b0; border: none;")
+            lbl.setStyleSheet("font-size: 14px; color: #a0a0b0; border: none;")
             fl.addWidget(lbl)
             val = QLabel("—")
-            val.setStyleSheet("font-size: 16px; font-weight: bold; color: #e0e0e0; border: none;")
+            val.setStyleSheet("font-size: 20px; font-weight: bold; color: #e0e0e0; border: none;")
             fl.addWidget(val)
             indicadores_grid.addWidget(frame)
             self.indicador_cards[key] = val
@@ -153,7 +155,7 @@ class DashboardPage(QWidget):
 
         alertas_group = QGroupBox("Alertas")
         alertas_layout = QVBoxLayout(alertas_group)
-        alertas_layout.setSpacing(8)
+        alertas_layout.setSpacing(12)
         self.alertas_container = QVBoxLayout()
         alertas_layout.addLayout(self.alertas_container)
 

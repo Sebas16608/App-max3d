@@ -14,7 +14,7 @@ class FilamentoDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Filamento" if not item else "Editar Filamento")
-        self.setMinimumSize(500, 450)
+        self.setMinimumSize(550, 500)
         self.setup_ui()
         if item:
             self.load_data()
@@ -126,7 +126,7 @@ class PinturaDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Pintura" if not item else "Editar Pintura")
-        self.setMinimumSize(500, 400)
+        self.setMinimumSize(550, 450)
         self.setup_ui()
         if item:
             self.load_data()
@@ -219,7 +219,7 @@ class OtroMaterialDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Otro Material" if not item else "Editar Material")
-        self.setMinimumSize(500, 320)
+        self.setMinimumSize(550, 360)
         self.setup_ui()
         if item:
             self.load_data()

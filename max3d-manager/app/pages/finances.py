@@ -15,7 +15,7 @@ class InvestmentDialog(QDialog):
         self.db = db
         self.item = item
         self.setWindowTitle("Inversión" if not item else "Editar Inversión")
-        self.setMinimumSize(450, 300)
+        self.setMinimumSize(550, 350)
         self.setup_ui()
         if item:
             self.load_data()
