@@ -87,9 +87,16 @@ class OrderDialog(QDialog):
         c_layout = QFormLayout(costs_tab)
         c_layout.setSpacing(10)
 
-        self.material = QLineEdit()
-        self.material.setPlaceholderText("Ej: PLA Negro")
+        self.material = QComboBox()
+        self.material.setMinimumWidth(250)
+        self.material.setPlaceholderText("Seleccionar filamento...")
+        self.material.currentIndexChanged.connect(self.on_material_cambio)
         c_layout.addRow("Material:", self.material)
+
+        self.lbl_stock = QLabel("")
+        self.lbl_stock.setStyleSheet("font-size: 13px; color: #a0a0b0; border: none;")
+        c_layout.addRow("", self.lbl_stock)
+        self._cargar_filamentos()
 
         self.peso = QDoubleSpinBox()
         self.peso.setRange(0, 99999)
@@ -216,6 +223,30 @@ class OrderDialog(QDialog):
         self.on_pintado_toggled(False)
         self.on_modelado_toggled(False)
 
+    def _cargar_filamentos(self):
+        self.material.clear()
+        self.material.addItem("Sin filamento", 0)
+        filamentos = self.db.fetch_all(
+            "SELECT id, nombre, peso_disponible, precio_por_gramo FROM filamentos ORDER BY nombre"
+        )
+        for f in filamentos:
+            label = f"{f['nombre']} ({f['peso_disponible']:.0f}g disponible)"
+            self.material.addItem(label, f["id"])
+        self.lbl_stock.setText("")
+
+    def on_material_cambio(self, idx):
+        fid = self.material.currentData()
+        if fid:
+            fil = self.db.fetch_one("SELECT nombre, peso_disponible, precio_por_gramo FROM filamentos WHERE id=?", [fid])
+            if fil:
+                self.lbl_stock.setText(f"Stock: {fil['peso_disponible']:.0f}g | Q{fil['precio_por_gramo']:.4f}/g")
+                if self.peso.value() > 0 and fil['peso_disponible'] < self.peso.value():
+                    self.lbl_stock.setStyleSheet("font-size: 13px; color: #e94560; border: none;")
+                else:
+                    self.lbl_stock.setStyleSheet("font-size: 13px; color: #a0a0b0; border: none;")
+        else:
+            self.lbl_stock.setText("")
+
     def on_tipo_cambio(self, idx):
         tipo = self.tipo_producto.currentData()
         is_catalog = tipo == "catalog"
@@ -240,7 +271,13 @@ class OrderDialog(QDialog):
         prod_id = self.producto_catalogo.currentData()
         prod = self.db.fetch_one("SELECT * FROM productos WHERE id=?", [prod_id])
         if prod:
-            self.material.setText(prod["material_principal"] or "")
+            mat = prod["material_principal"] or ""
+            if mat:
+                for i in range(self.material.count()):
+                    txt = self.material.itemText(i)
+                    if mat.lower() in txt.lower():
+                        self.material.setCurrentIndex(i)
+                        break
             self.peso.setValue(prod["peso_estimado"] or 0)
             self.horas_impresion.setValue(prod["horas_impresion"] or 0)
             self.pintado_chk.setChecked(bool(prod["pintado"]))
@@ -264,9 +301,9 @@ class OrderDialog(QDialog):
         costo_pint = self.costo_pintura.value() if self.pintado_chk.isChecked() else 0
 
         precio_por_gramo = 0
-        mat_nombre = self.material.text().strip()
-        if mat_nombre:
-            fil = self.db.fetch_one("SELECT precio_por_gramo FROM filamentos WHERE nombre LIKE ? LIMIT 1", (f"%{mat_nombre}%",))
+        fid = self.material.currentData()
+        if fid:
+            fil = self.db.fetch_one("SELECT precio_por_gramo FROM filamentos WHERE id=?", [fid])
             if fil:
                 precio_por_gramo = fil["precio_por_gramo"] or 0
 
@@ -313,7 +350,13 @@ class OrderDialog(QDialog):
         if self.pedido["fecha_entrega"]:
             self.fecha_entrega.setDate(QDate.fromString(self.pedido["fecha_entrega"], "yyyy-MM-dd"))
         self.notas.setPlainText(self.pedido["notas"] or "")
-        self.material.setText(self.pedido["material_principal"] or "")
+        mat = self.pedido["material_principal"] or ""
+        if mat:
+            for i in range(self.material.count()):
+                txt = self.material.itemText(i)
+                if mat.lower() in txt.lower():
+                    self.material.setCurrentIndex(i)
+                    break
         self.peso.setValue(self.pedido["peso_real"] or 0)
         self.horas_impresion.setValue(self.pedido["horas_impresion_real"] or 0)
         self.pintado_chk.setChecked(bool(self.pedido["pintado"]))
@@ -356,7 +399,7 @@ class OrderDialog(QDialog):
             "modelado_por_mi": 1 if self.modelado_chk.isChecked() else 0,
             "horas_modelado": self.horas_modelado.value(),
             "costo_modelado": costo_modelado_val,
-            "material_principal": self.material.text().strip(),
+            "material_principal": self.material.currentText().split(" (")[0] if self.material.currentData() else "",
             "peso_real": self.peso.value(),
             "horas_impresion_real": self.horas_impresion.value(),
             "costo_material": float(self.lbl_costo_material.text().replace("Q", "").replace(",", "")) if self.lbl_costo_material.text() != "—" else 0,
@@ -383,11 +426,21 @@ class OrderDialog(QDialog):
         self.accept()
 
     def descontar_material(self):
-        mat_nombre = self.material.text().strip()
+        fid = self.material.currentData()
         peso_consumido = self.peso.value()
-        if mat_nombre and peso_consumido > 0:
-            fil = self.db.fetch_one("SELECT id, peso_disponible FROM filamentos WHERE nombre LIKE ? LIMIT 1", (f"%{mat_nombre}%",))
+        if fid and peso_consumido > 0:
+            fil = self.db.fetch_one("SELECT id, peso_disponible FROM filamentos WHERE id=?", [fid])
             if fil:
+                if fil["peso_disponible"] < peso_consumido:
+                    reply = QMessageBox.question(
+                        self, "Stock insuficiente",
+                        f"Stock disponible: {fil['peso_disponible']:.0f}g\n"
+                        f"Consumo requerido: {peso_consumido:.0f}g\n"
+                        f"¿Desea continuar (quedará en negativo)?",
+                        QMessageBox.Yes | QMessageBox.No
+                    )
+                    if reply == QMessageBox.No:
+                        return
                 nuevo_peso = max(0, fil["peso_disponible"] - peso_consumido)
                 self.db.update("filamentos", {"peso_disponible": nuevo_peso}, "id=?", [fil["id"]])
                 self.db.insert("inventario_movimientos", {
@@ -395,7 +448,7 @@ class OrderDialog(QDialog):
                     "item_id": fil["id"],
                     "item_tipo": "filamento",
                     "cantidad": -peso_consumido,
-                    "descripcion": f"Consumido en pedido"
+                    "descripcion": f"Consumido en pedido #{self.pedido['id'] if self.pedido else 'nuevo'}"
                 })
 
 
