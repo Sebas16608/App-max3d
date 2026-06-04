@@ -29,8 +29,11 @@ if ! command -v pip3 &> /dev/null; then
     apt-get update -qq && apt-get install -y -qq python3-pip
 fi
 
+echo "Instalando librerías del sistema..."
+apt-get install -y -qq libxcb-cursor0 2>/dev/null || true
+
 echo "[2/5] Instalando dependencias Python..."
-pip3 install PySide6>=6.5.0 matplotlib>=3.7.0 reportlab>=4.0 openpyxl>=3.1.0 --quiet --break-system-packages 2>/dev/null || \
+pip3 install PySide6 matplotlib reportlab openpyxl --quiet --break-system-packages 2>/dev/null || \
 pip3 install PySide6 matplotlib reportlab openpyxl --quiet
 
 echo "[3/5] Copiando archivos..."
