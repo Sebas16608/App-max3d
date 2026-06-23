@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Max3D Creations Manager
-Comment=ERP para negocio de impresión 3D
-Exec=/opt/max3d-manager/main.py
-Icon=/opt/max3d-manager/resources/icon.svg
-Terminal=false
-Type=Application
-Categories=Office;Business;Graphics;
-StartupNotify=true
